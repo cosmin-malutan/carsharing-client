@@ -4,6 +4,7 @@ const initialState = {
   email: '',
   name: '',
   password: '',
+  authenticated: false,
   state: ''
 }
 
@@ -23,10 +24,15 @@ export function auth(state = initialState, action) {
         state: action.type
       });
     case types.LOGIN_SUCCESSFUL:
-    case types.LOGIN_FAILED:
     case types.SIGNUP_SUCCESSFUL:
+      return Object.assign({}, state, {
+        authenticated: true,
+        state: action.type
+      });
+    case types.LOGIN_FAILED:
     case types.SIGNUP_FAILED:
       return Object.assign({}, state, {
+        authenticated: false,
         state: action.type
       });
     default:

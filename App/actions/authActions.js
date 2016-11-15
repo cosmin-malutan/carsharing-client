@@ -1,3 +1,5 @@
+import { AsyncStorage } from 'react-native';
+
 import * as types from './actionTypes';
 import ApiClass from '../services/api';
 
@@ -26,8 +28,13 @@ export function login(email, password) {
     dispatch(loginStart(email, password));
     ApiClass.login(email, password).then((response) => {
       dispatch(loginSuccess());
+      AsyncStorage.setItem('creditentials', JSON.stringify({
+        email: email,
+        password: password
+      }));
     }).catch((err) => {
-      dispatch(loginFail());
+      dispatch(loginFail(err));
+      AsyncStorage.removeItem('creditentials');
     })
   }
 }
@@ -58,8 +65,27 @@ export function signup(email, name, password) {
     dispatch(signupStart(email, name, password));
     ApiClass.signup(email, name, password).then((response) => {
       dispatch(signupSuccess());
+      AsyncStorage.setItem('creditentials', JSON.stringify({
+        email: email,
+        password: password
+      }));
     }).catch((err) => {
-      dispatch(signupFail());
+      dispatch(signupFail(err));
+      AsyncStorage.removeItem('creditentials');
+    })
+  }
+}
+
+export function checkUser() {
+  return (dispatch, getState) => {
+    // Check user and try to login
+    AsyncStorage.getItem('creditentials').then((data) => {
+      if (data) {
+        var creditentials = JSON.parse(data);
+        dispatch(login(creditentials.email, creditentials.password));
+      }
+    }).catch((err) => {
+      AsyncStorage.removeItem('creditentials');
     })
   }
 }

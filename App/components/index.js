@@ -7,14 +7,24 @@ import {
   Navigator,
   View
 } from 'react-native';
+import {connect} from 'react-redux';
+
+import * as types from '../actions/actionTypes';
+import {checkUser} from '../actions/authActions';
 
 import Signup from './signup'
 import Login from './login'
 import Home from './home'
 
-export default class Index extends Component {
+class Index extends Component {
   constructor(props){
     super(props)
+  }
+
+  componentWillMount() {
+    if (!this.props.auth.authenticated) {
+      this.props.dispatch(checkUser());
+    }
   }
 
   renderScene(route, navigator) {
@@ -67,3 +77,8 @@ export default class Index extends Component {
     )
   }
 }
+
+
+export default connect(state => ({
+  auth: state.auth,
+}))(Index);

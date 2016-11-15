@@ -1,5 +1,3 @@
-
-
 const default_options = {
   headers: {
     'Accept': 'application/json',

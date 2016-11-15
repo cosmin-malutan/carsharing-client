@@ -23,8 +23,14 @@ class Signup extends Component {
     };
   }
 
+  componentDidMount() {
+    if (this.props.auth.authenticated) {
+      this.props.navigator.push({id: 'home'});
+    }
+  }
+
   componentWillReceiveProps(props) {
-    if (props.auth.state == types.SIGNUP_SUCCESSFUL) {
+    if (props.auth.authenticated) {
       props.navigator.push({id: 'home'});
     }
   }

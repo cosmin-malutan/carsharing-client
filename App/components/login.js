@@ -24,7 +24,7 @@ class Login extends Component {
   }
 
   componentWillReceiveProps(props) {
-    if (props.auth.state == types.LOGIN_SUCCESSFUL) {
+    if (props.auth.authenticated) {
       props.navigator.push({id: 'home'});
     }
   }
