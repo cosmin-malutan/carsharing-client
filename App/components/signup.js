@@ -6,8 +6,12 @@ import {
   TextInput,
   View
 } from 'react-native';
+import {connect} from 'react-redux';
 import { Button, Icon } from 'react-native-material-design';
 import TransparentButton from 'react-native-button/Button';
+
+import * as types from '../actions/actionTypes';
+import {signup} from '../actions/authActions';
 
 class Signup extends Component {
   constructor(props) {
@@ -20,13 +24,13 @@ class Signup extends Component {
   }
 
   componentWillReceiveProps(props) {
-    if (props.auth.state == types.LOGIN_SUCCESSFUL) {
+    if (props.auth.state == types.SIGNUP_SUCCESSFUL) {
       props.navigator.push({id: 'home'});
     }
   }
 
   signup() {
-    debugger;
+    this.props.dispatch(signup(this.state.email, this.state.name, this.state.password));
   }
 
   render() {
@@ -75,7 +79,7 @@ class Signup extends Component {
             />
           </View>
           <View style={styles.bottomContainerRow}>
-            <Button onPress={() => {alert('Success')}}
+            <Button onPress={this.signup.bind(this)}
                     theme="dark"
                     primary="paperLightBlue"
                     style={styles.input}

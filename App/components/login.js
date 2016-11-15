@@ -6,9 +6,7 @@ import {
   TextInput,
   View
 } from 'react-native';
-
 import {connect} from 'react-redux';
-
 import { Button, Icon, PRIMARY } from 'react-native-material-design';
 import TransparentButton from 'react-native-button/Button';
 
