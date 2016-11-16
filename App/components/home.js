@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 
 import {connect} from 'react-redux';
+import MapView from 'react-native-maps';
+ 
 
 class Home extends Component {
 
@@ -17,16 +19,28 @@ class Home extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Home</Text>
+        <MapView style={styles.map}
+          initialRegion={{
+            latitude: 46.7765346,
+            longitude: 23.603722899999998,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  }
+ container: {
+   ...StyleSheet.absoluteFillObject,
+   justifyContent: 'flex-end',
+   alignItems: 'center',
+ },
+ map: {
+   ...StyleSheet.absoluteFillObject,
+ }
 });
 
 export default connect(state => ({
