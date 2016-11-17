@@ -25,13 +25,13 @@ class Signup extends Component {
 
   componentDidMount() {
     if (this.props.auth.authenticated) {
-      this.props.navigator.push({id: 'home'});
+      this.props.navigator.resetTo({id: 'home'});
     }
   }
 
   componentWillReceiveProps(props) {
     if (props.auth.authenticated) {
-      props.navigator.push({id: 'home'});
+      props.navigator.resetTo({id: 'home'});
     }
   }
 
@@ -48,7 +48,7 @@ class Signup extends Component {
                  style={styles.topContainerBackground}>
             <View style={styles.topContainerMenu}>
               <TransparentButton style={styles.loginButton} 
-                                 onPress={() => this.props.navigator.push({id: 'login'})}
+                                 onPress={() => this.props.navigator.resetTo({id: 'login'})}
                                 color='#841584'>
                 Login
               </TransparentButton>

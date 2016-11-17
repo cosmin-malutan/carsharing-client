@@ -25,7 +25,7 @@ class Login extends Component {
 
   componentWillReceiveProps(props) {
     if (props.auth.authenticated) {
-      props.navigator.push({id: 'home'});
+      props.navigator.resetTo({id: 'home'});
     }
   }
 
@@ -44,7 +44,7 @@ class Login extends Component {
           </TransparentButton>
           <Text style={styles.headerText}>LOGIN </Text>
           <TransparentButton style={styles.signupButton} 
-                  onPress={() => this.props.navigator.push({id: 'signup'})}
+                  onPress={() => this.props.navigator.resetTo({id: 'signup'})}
                   color='#841584'>
             Signup
           </TransparentButton>
