@@ -21,7 +21,7 @@ class ApiClass {
   }
 
   static login(email, password) {
-    return ApiClass.call('http://localhost:8080/login', {
+    return ApiClass.call('http://192.168.1.3:8080/login', {
       method: 'POST',
       body: JSON.stringify({
         email: email,
@@ -31,7 +31,7 @@ class ApiClass {
   }
 
   static signup(email, name, password) {
-    return ApiClass.call('http://localhost:8080/signup', {
+    return ApiClass.call('http://192.168.1.3:8080/signup', {
         method: 'POST',
         body: JSON.stringify({
           email: email,

@@ -9,7 +9,8 @@ import {
 
 import {connect} from 'react-redux';
 import MapView from 'react-native-maps';
- 
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+
 import {updateLocation} from '../actions/locationActions';
 
 class Home extends Component {
@@ -18,7 +19,7 @@ class Home extends Component {
       (position) => {
         this.props.dispatch(updateLocation(position.coords));
       },
-      (error) => alert(JSON.stringify(error)),
+      (error) => {alert(JSON.stringify(error))},
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     );
 
@@ -28,7 +29,7 @@ class Home extends Component {
   }
 
   componentWillReceiveProps(props) {
-    debugger;
+    //debugger;
   }
 
   render() {
@@ -45,7 +46,8 @@ class Home extends Component {
                   latitude: this.props.position.coords.latitude,
                   longitude: this.props.position.coords.longitude,
                   latitudeDelta: 0.05,
-                  longitudeDelta: 0.05}}
+                  longitudeDelta: 0.05
+                }}
         >
         <MapView.Marker
           coordinate={{  
@@ -57,6 +59,36 @@ class Home extends Component {
           image={require('../images/me.png')}
         />
         </MapView>
+        <View style={styles.destinationInput}>
+            <GooglePlacesAutocomplete placeholder='Search'
+                                      minLength={2} // minimum length of text to search
+                                      autoFocus={false}
+                                      listViewDisplayed='auto'    // true/false/undefined
+                                      fetchDetails={true}
+                                      renderDescription={(row) => row.terms[0].value} // display street only
+                                      onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
+                                        console.log(data);
+                                        console.log(details);
+                                      }}
+                                      getDefaultValue={() => {
+                                        return ''; // text input default value
+                                      }}
+                                      query={{
+                                        // available options: https://developers.google.com/places/web-service/autocomplete
+                                        key: 'AIzaSyDc3Ez57UyPlbJ0glDFF6n1DorZFVjjQnk',
+                                        language: 'en', // language of the results
+                                      }}
+                                      styles={{
+                                        description: {
+                                          fontWeight: 'bold',
+                                        },
+                                        predefinedPlacesDescription: {
+                                          color: '#1faadb',
+                                        },
+                                      }}
+                                      filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}
+                                      enablePoweredByContainer={false} />
+        </View>
       </View>
     )
   }
@@ -70,6 +102,13 @@ const styles = StyleSheet.create({
  },
  map: {
    ...StyleSheet.absoluteFillObject,
+ },
+ destinationInput: {
+    flex: 1,
+    padding: 5,
+    paddingTop: 50,
+    marginLeft: 10,
+    marginRight: 10
  }
 });
 

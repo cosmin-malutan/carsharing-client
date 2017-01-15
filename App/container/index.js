@@ -10,6 +10,8 @@ import Components from '../components/index';
 const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
 const store = createStoreWithMiddleware(reducer);
 
+global.initAutocomplete = () => { debugger; }
+
 export default class Index extends Component {
   render() {
     return (
