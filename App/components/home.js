@@ -10,45 +10,47 @@ import {
 import {connect} from 'react-redux';
 import MapView from 'react-native-maps';
  
+import {updateLocation} from '../actions/locationActions';
 
 class Home extends Component {
-  state = {coords: {
-            latitude: 46.7765346,
-            longitude: 23.6037229
-          }
-        };
   componentDidMount() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        this.setState({position});
+        this.props.dispatch(updateLocation(position.coords));
       },
       (error) => alert(JSON.stringify(error)),
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     );
 
     this.watchID = navigator.geolocation.watchPosition((position) => {
-      this.setState({position});
+        this.props.dispatch(updateLocation(position.coords));
     });
   }
 
   componentWillReceiveProps(props) {
+    debugger;
   }
 
   render() {
     return (
       <View style={styles.container}>
         <MapView style={styles.map}
-          initialRegion={{
-            latitude: this.state.coords.latitude,
-            longitude: this.state.coords.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
+                 initialRegion={{
+                   latitude: this.props.position.coords.latitude,
+                   longitude: this.props.position.coords.longitude,
+                   latitudeDelta: 0.05,
+                   longitudeDelta: 0.05,
+                   }}
+                region={{
+                  latitude: this.props.position.coords.latitude,
+                  longitude: this.props.position.coords.longitude,
+                  latitudeDelta: 0.05,
+                  longitudeDelta: 0.05}}
         >
         <MapView.Marker
           coordinate={{  
-            latitude: this.state.coords.latitude,
-            longitude: this.state.coords.longitude,
+            latitude: this.props.position.coords.latitude,
+            longitude: this.props.position.coords.longitude,
           }}
           title={"You are here"}
           description={"HERE"}
@@ -73,4 +75,5 @@ const styles = StyleSheet.create({
 
 export default connect(state => ({
   auth: state.auth,
+  position: state.position,
 }))(Home);

@@ -8,3 +8,5 @@ export const SIGNUP = 'SIGNUP';
 export const SIGNUP_START = 'SIGNUP_START';
 export const SIGNUP_SUCCESSFUL = 'SIGNUP_SUCCESSFUL';
 export const SIGNUP_FAILED = 'SIGNUP_FAILED';
+
+export const UPDATE_LOCATION = 'UPDATE_LOCATION';
