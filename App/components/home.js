@@ -8,10 +8,11 @@ import {
 } from 'react-native';
 
 import {connect} from 'react-redux';
+import polyline from 'polyline';
 import MapView from 'react-native-maps';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
-import {updateLocation} from '../actions/locationActions';
+import DestinationSearchBox from './destinationSearchBox'
+import {updateLocation, destinationsSelect} from '../actions/locationActions';
 
 class Home extends Component {
   componentDidMount() {
@@ -26,10 +27,20 @@ class Home extends Component {
     this.watchID = navigator.geolocation.watchPosition((position) => {
         this.props.dispatch(updateLocation(position.coords));
     });
+
+    this.onDestinationSelect = this.onDestinationSelect.bind(this);
   }
 
   componentWillReceiveProps(props) {
-    //debugger;
+    if (props.position.trip) {
+      // TODO: calculate region based on trip.routes[0].bounds and the delta
+      // draw the polyline just decoded here;
+      console.log('polyline points = ', polyline.decode(props.position.trip.routes[0].overview_polyline.points));
+    }
+  }
+
+  onDestinationSelect(destination) {
+    this.props.dispatch(destinationsSelect(destination));
   }
 
   render() {
@@ -39,14 +50,14 @@ class Home extends Component {
                  initialRegion={{
                    latitude: this.props.position.coords.latitude,
                    longitude: this.props.position.coords.longitude,
-                   latitudeDelta: 0.05,
-                   longitudeDelta: 0.05,
+                   latitudeDelta: 0.01,
+                   longitudeDelta: 0.01,
                    }}
                 region={{
                   latitude: this.props.position.coords.latitude,
                   longitude: this.props.position.coords.longitude,
-                  latitudeDelta: 0.05,
-                  longitudeDelta: 0.05
+                  latitudeDelta: 0.01,
+                  longitudeDelta: 0.01
                 }}
         >
         <MapView.Marker
@@ -59,35 +70,8 @@ class Home extends Component {
           image={require('../images/me.png')}
         />
         </MapView>
-        <View style={styles.destinationInput}>
-            <GooglePlacesAutocomplete placeholder='Search'
-                                      minLength={2} // minimum length of text to search
-                                      autoFocus={false}
-                                      listViewDisplayed='auto'    // true/false/undefined
-                                      fetchDetails={true}
-                                      renderDescription={(row) => row.terms[0].value} // display street only
-                                      onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
-                                        console.log(data);
-                                        console.log(details);
-                                      }}
-                                      getDefaultValue={() => {
-                                        return ''; // text input default value
-                                      }}
-                                      query={{
-                                        // available options: https://developers.google.com/places/web-service/autocomplete
-                                        key: 'AIzaSyDc3Ez57UyPlbJ0glDFF6n1DorZFVjjQnk',
-                                        language: 'en', // language of the results
-                                      }}
-                                      styles={{
-                                        description: {
-                                          fontWeight: 'bold',
-                                        },
-                                        predefinedPlacesDescription: {
-                                          color: '#1faadb',
-                                        },
-                                      }}
-                                      filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}
-                                      enablePoweredByContainer={false} />
+        <View style={styles.destinationInputBox}>
+          <DestinationSearchBox onSelect={this.onDestinationSelect}/>
         </View>
       </View>
     )
@@ -103,7 +87,7 @@ const styles = StyleSheet.create({
  map: {
    ...StyleSheet.absoluteFillObject,
  },
- destinationInput: {
+ destinationInputBox: {
     flex: 1,
     padding: 5,
     paddingTop: 50,
