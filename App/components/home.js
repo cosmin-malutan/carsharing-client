@@ -13,6 +13,7 @@ import polyline from 'polyline';
 import MapView from 'react-native-maps';
 import { RadioButtonGroup, Button, Icon, PRIMARY } from 'react-native-material-design';
 
+import config from '../config';
 import DestinationSearchBox from './destinationSearchBox';
 
 import {actorTypeChange} from '../actions/authActions';

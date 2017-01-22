@@ -1,5 +1,7 @@
 import config from '../config';
 
+import {socketConnected, socketClosed, socketMessage, socketError} from '../actions/socketActions';
+
 const default_options = {
   method: 'GET',
   headers: {
@@ -8,6 +10,8 @@ const default_options = {
   }
 }
 const DIRECTIONS_API = "https://maps.googleapis.com/maps/api/directions/json";
+
+let socket;
 
 class ApiClass {
   static call(url, options = {}) {
@@ -47,6 +51,28 @@ class ApiClass {
 
   static fecthTrip(origin, destination) {
     return ApiClass.call(`${DIRECTIONS_API}?origin=${origin}&destination=${destination}&key=${config.GOOGLE_API_KEY}`);
+  }
+
+  static connectWebSocket(dispatch) {
+
+    try {
+      socket = new WebSocket(`ws://${config.SERVER_HOST}:${config.SERVER_PORT}`);
+      socket.onerror = function(error) {
+        console.error('socket error:', error.message);
+        dispatch(socketError(error.message))
+      };
+      socket.onopen = function() {
+        dispatch(socketConnected());
+      };
+      socket.onclose = function() {
+        dispatch(socketClosed());
+      };
+      socket.onmessage = function(message) {
+        dispatch(socketMessage(message));
+      };
+    } catch (err) {
+      console.error('Failed to initialize websoket', err);
+    }
   }
 }
 

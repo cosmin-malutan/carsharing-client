@@ -32,6 +32,7 @@ export function login(email, password) {
         email: email,
         password: password
       }));
+      ApiClass.connectWebSocket(dispatch);
     }).catch((err) => {
       dispatch(loginFail(err));
       AsyncStorage.removeItem('creditentials');
@@ -69,6 +70,7 @@ export function signup(email, name, password) {
         email: email,
         password: password
       }));
+      ApiClass.connectWebSocket(dispatch);
     }).catch((err) => {
       dispatch(signupFail(err));
       AsyncStorage.removeItem('creditentials');
