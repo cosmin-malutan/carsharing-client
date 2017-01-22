@@ -4,15 +4,21 @@ import {
   Image,
   Text,
   TextInput,
-  View
+  View,
+  Dimensions
 } from 'react-native';
 
 import {connect} from 'react-redux';
 import polyline from 'polyline';
 import MapView from 'react-native-maps';
+import { RadioButtonGroup, Button, Icon, PRIMARY } from 'react-native-material-design';
 
-import DestinationSearchBox from './destinationSearchBox'
+import DestinationSearchBox from './destinationSearchBox';
+
+import {actorTypeChange} from '../actions/authActions';
 import {updateLocation, destinationsSelect} from '../actions/locationActions';
+
+var {width} = Dimensions.get('window');
 
 class Home extends Component {
   componentDidMount() {
@@ -27,37 +33,64 @@ class Home extends Component {
     this.watchID = navigator.geolocation.watchPosition((position) => {
         this.props.dispatch(updateLocation(position.coords));
     });
-
-    this.onDestinationSelect = this.onDestinationSelect.bind(this);
-  }
-
-  componentWillReceiveProps(props) {
-    if (props.position.trip) {
-      // TODO: calculate region based on trip.routes[0].bounds and the delta
-      // draw the polyline just decoded here;
-      console.log('polyline points = ', polyline.decode(props.position.trip.routes[0].overview_polyline.points));
-    }
   }
 
   onDestinationSelect(destination) {
     this.props.dispatch(destinationsSelect(destination));
   }
 
+  onActorTypeChange(type) {
+    this.props.dispatch(actorTypeChange(type));
+  }
+
+  onConfirm() {
+
+  }
+
+  onCancel() {
+
+  }
+
   render() {
+    let polylineArray;
+    let route = null;
+    let latitude = this.props.position.coords.latitude;
+    let longitude = this.props.position.coords.longitude;
+    let latitudeDelta = 0.01;
+    let longitudeDelta = 0.01;
+    let isClient = this.props.auth.actorType == 'rider';
+    let confirmButtonText = isClient ? 'Send order' : 'Accept';
+    let cancelButtonText = isClient ? 'Cancel' : 'Decline';
+
+    if (this.props.position.trip && this.props.position.trip.routes.length) {
+      route = this.props.position.trip.routes[0];
+      latitudeDelta = longitudeDelta = Math.max(route.bounds.northeast.lat - route.bounds.southwest.lat,
+                                                route.bounds.northeast.lng - route.bounds.southwest.lng) * 1.1;
+      latitude = (route.bounds.northeast.lat + route.bounds.southwest.lat) / 2;
+      longitude = (route.bounds.northeast.lng + route.bounds.southwest.lng) / 2;
+
+      polylineArray =  polyline.decode(this.props.position.trip.routes[0].overview_polyline.points).map((pair) => {
+        return {
+          latitude: pair[0],
+          longitude: pair[1]
+        };
+      });
+    }
+
     return (
       <View style={styles.container}>
         <MapView style={styles.map}
                  initialRegion={{
-                   latitude: this.props.position.coords.latitude,
-                   longitude: this.props.position.coords.longitude,
-                   latitudeDelta: 0.01,
-                   longitudeDelta: 0.01,
+                   latitude: latitude,
+                   longitude: longitude,
+                   latitudeDelta: latitudeDelta,
+                   longitudeDelta: longitudeDelta,
                    }}
                 region={{
-                  latitude: this.props.position.coords.latitude,
-                  longitude: this.props.position.coords.longitude,
-                  latitudeDelta: 0.01,
-                  longitudeDelta: 0.01
+                   latitude: latitude,
+                   longitude: longitude,
+                   latitudeDelta: latitudeDelta,
+                   longitudeDelta: longitudeDelta,
                 }}
         >
         <MapView.Marker
@@ -69,9 +102,36 @@ class Home extends Component {
           description={"HERE"}
           image={require('../images/me.png')}
         />
+        {route && <MapView.Marker coordinate={{
+                                    latitude: route.legs[0].end_location.lat,
+                                    longitude: route.legs[0].end_location.lng
+                                  }}
+                                  title={"Destination"}
+                                  description={route.legs[0].end_address} />}
+        {polylineArray && <MapView.Polyline strokeWidth={2}
+                                            coordinates={polylineArray} />}
         </MapView>
         <View style={styles.destinationInputBox}>
-          <DestinationSearchBox onSelect={this.onDestinationSelect}/>
+          {isClient && <DestinationSearchBox onSelect={this.onDestinationSelect.bind(this)}/>}
+        </View>
+        <View style={styles.actions}>
+          <View style={{width: width / 2}}>
+            <RadioButtonGroup selected={this.props.auth.actorType}
+                              items={[{value: 'rider', label: 'Rider'}, {value: 'driver', label: 'Driver'}]}
+                              onSelect={this.onActorTypeChange.bind(this)}/>
+          </View>
+          <View style={{width: width / 2}}>
+            {route && <Button onPress={this.onConfirm.bind(this)}
+                              theme="dark"
+                              primary="paperLightBlue"
+                              raised={true}
+                              text={confirmButtonText}/>}
+            {route && <Button onPress={this.onCancel.bind(this)}
+                              theme="dark"
+                              primary="paperRed"
+                              raised={true}
+                              text={cancelButtonText}/>}
+          </View>
         </View>
       </View>
     )
@@ -89,10 +149,16 @@ const styles = StyleSheet.create({
  },
  destinationInputBox: {
     flex: 1,
-    padding: 5,
-    paddingTop: 50,
-    marginLeft: 10,
-    marginRight: 10
+   ...StyleSheet.absoluteFillObject
+ },
+ actions: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end'
+ },
+ orderActions: {
+    flex: 1,
  }
 });
 

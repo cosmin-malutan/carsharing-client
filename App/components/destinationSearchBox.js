@@ -1,22 +1,21 @@
 import React, { Component } from 'react';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
+import config from '../config';
+
 export default class DestinationSearchBox extends Component {
   render () {
     return <GooglePlacesAutocomplete placeholder='Search'
-                                     minLength={2} // minimum length of text to search
+                                     minLength={3} // minimum length of text to search
                                      autoFocus={false}
                                      listViewDisplayed='auto'    // true/false/undefined
                                      fetchDetails={true}
                                      renderDescription={(row) => row.terms[0].value} // display street only
                                      onPress={this.props.onSelect}
-                                     getDefaultValue={() => {
-                                        return ''; // text input default value
-                                     }}
+                                     getDefaultValue={() => ''}
                                      query={{
-                                        // available options: https://developers.google.com/places/web-service/autocomplete
-                                        key: 'AIzaSyDc3Ez57UyPlbJ0glDFF6n1DorZFVjjQnk',
-                                        language: 'en', // language of the results
+                                        key: config.GOOGLE_API_KEY,
+                                        language: 'ro', // language of the results
                                     }}
                                     styles={{
                                       predefinedPlacesDescription: {

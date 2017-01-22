@@ -1,3 +1,5 @@
+import config from '../config';
+
 const default_options = {
   method: 'GET',
   headers: {
@@ -6,7 +8,6 @@ const default_options = {
   }
 }
 const DIRECTIONS_API = "https://maps.googleapis.com/maps/api/directions/json";
-const GOOGLE_API_KEY = "AIzaSyDc3Ez57UyPlbJ0glDFF6n1DorZFVjjQnk";
 
 class ApiClass {
   static call(url, options = {}) {
@@ -24,7 +25,7 @@ class ApiClass {
   }
 
   static login(email, password) {
-    return ApiClass.call('http://192.168.1.6:8080/login', {
+    return ApiClass.call(`${config.SERVER_PROTO}://${config.SERVER_HOST}:${config.SERVER_PORT}/login`, {
       method: 'POST',
       body: JSON.stringify({
         email: email,
@@ -34,7 +35,7 @@ class ApiClass {
   }
 
   static signup(email, name, password) {
-    return ApiClass.call('http://192.168.1.6:8080/signup', {
+    return ApiClass.call(`${config.SERVER_PROTO}://${config.SERVER_HOST}:${config.SERVER_PORT}/signup`, {
         method: 'POST',
         body: JSON.stringify({
           email: email,
@@ -45,7 +46,7 @@ class ApiClass {
   }
 
   static fecthTrip(origin, destination) {
-    return ApiClass.call(`${DIRECTIONS_API}?origin=${origin}&destination=${destination}&key=${GOOGLE_API_KEY}`);
+    return ApiClass.call(`${DIRECTIONS_API}?origin=${origin}&destination=${destination}&key=${config.GOOGLE_API_KEY}`);
   }
 }
 

@@ -5,7 +5,8 @@ const initialState = {
   name: '',
   password: '',
   authenticated: false,
-  state: ''
+  state: '',
+  actorType: 'rider'
 }
 
 export default function auth(state = initialState, action) {
@@ -34,6 +35,10 @@ export default function auth(state = initialState, action) {
       return Object.assign({}, state, {
         authenticated: false,
         state: action.type
+      });
+    case types.ACTOR_TYPE_CHANGE:
+      return Object.assign({}, state, {
+        actorType: action.actorType
       });
     default:
       return state;

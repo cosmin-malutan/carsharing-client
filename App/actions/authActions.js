@@ -89,3 +89,10 @@ export function checkUser() {
     })
   }
 }
+
+export function actorTypeChange(type) {
+  return {
+    type: types.ACTOR_TYPE_CHANGE,
+    actorType: type
+  }
+}
