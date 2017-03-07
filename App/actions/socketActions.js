@@ -20,6 +20,7 @@ export function socketClosed() {
 }
 
 export function socketMessage(message) {
+  console.log(message)
   return {
     type: types.SOCKET_MESSAGE,
     message: message

@@ -1,7 +1,35 @@
+import uuid from 'react-native-uuid';
+
 import * as types from './actionTypes';
 import ApiClass from '../services/api';
 
+function sendOrder(id) {
+  return {
+    type: types.SEND_ORDER,
+    uuid: id
+  };
+}
 
+export function confirm() {
+  return (dispatch, getState) => {
+    switch (getState().auth.actorType) {
+      case "rider":
+        const trip = getState().position.trip;
+        const id = uuid.v4();
+        dispatch(sendOrder(id));
+        ApiClass.sendOrder(trip, id);
+      case "driver":
+      default:
+        console.log("Unhandled user type:", getState().auth.actorType);
+    }
+  }
+}
+
+export function cancel() {
+  return {
+    type : types.CANCEL_TRIP
+  };
+}
 export function updateLocation(coords) {
   return {
     type : types.UPDATE_LOCATION,

@@ -17,6 +17,10 @@ export const FETCH_TRIP_START = 'FETCH_TRIP_START';
 export const FETCH_TRIP_SUCCESS = 'FETCH_TRIP_SUCCESS';
 export const FETCH_TRIP_FAIL = 'FETCH_TRIP_FAIL';
 
+export const CANCEL_TRIP = 'CANCEL_TRIP';
+
+export const SEND_ORDER = 'SEND_ORDER';
+
 export const SOCKET_ERROR = 'SOCKET_ERROR';
 export const SOCKET_CONNECTED = 'SOCKET_CONNECTED';
 export const SOCKET_CLOSED = 'SOCKET_CLOSED';

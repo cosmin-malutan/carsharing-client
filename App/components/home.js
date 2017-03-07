@@ -5,7 +5,8 @@ import {
   Text,
   TextInput,
   View,
-  Dimensions
+  Dimensions,
+  ActivityIndicator
 } from 'react-native';
 
 import {connect} from 'react-redux';
@@ -17,7 +18,7 @@ import config from '../config';
 import DestinationSearchBox from './destinationSearchBox';
 
 import {actorTypeChange} from '../actions/authActions';
-import {updateLocation, destinationsSelect} from '../actions/locationActions';
+import {updateLocation, destinationsSelect, confirm, cancel} from '../actions/locationActions';
 
 var {width} = Dimensions.get('window');
 
@@ -45,11 +46,11 @@ class Home extends Component {
   }
 
   onConfirm() {
-
+    this.props.dispatch(confirm());
   }
 
   onCancel() {
-
+    this.props.dispatch(cancel());
   }
 
   render() {
@@ -62,11 +63,13 @@ class Home extends Component {
     let isClient = this.props.auth.actorType == 'rider';
     let confirmButtonText = isClient ? 'Send order' : 'Accept';
     let cancelButtonText = isClient ? 'Cancel' : 'Decline';
+    let showAcctions;
+    let showSpiner;
 
     if (this.props.position.trip && this.props.position.trip.routes.length) {
       route = this.props.position.trip.routes[0];
       latitudeDelta = longitudeDelta = Math.max(route.bounds.northeast.lat - route.bounds.southwest.lat,
-                                                route.bounds.northeast.lng - route.bounds.southwest.lng) * 1.1;
+                                                route.bounds.northeast.lng - route.bounds.southwest.lng) * 1.5;
       latitude = (route.bounds.northeast.lat + route.bounds.southwest.lat) / 2;
       longitude = (route.bounds.northeast.lng + route.bounds.southwest.lng) / 2;
 
@@ -76,6 +79,15 @@ class Home extends Component {
           longitude: pair[1]
         };
       });
+    }
+
+    showAcctions = route;
+
+    if (showAcctions) {
+      if (this.props.auth.actorType == 'rider' && this.props.position.order) {
+        showAcctions = false;
+        showSpiner = true;
+      }
     }
 
     return (
@@ -122,16 +134,19 @@ class Home extends Component {
                               onSelect={this.onActorTypeChange.bind(this)}/>
           </View>
           <View style={{width: width / 2}}>
-            {route && <Button onPress={this.onConfirm.bind(this)}
+            {showAcctions && <Button onPress={this.onConfirm.bind(this)}
                               theme="dark"
                               primary="paperLightBlue"
                               raised={true}
                               text={confirmButtonText}/>}
-            {route && <Button onPress={this.onCancel.bind(this)}
+            {showAcctions && <Button onPress={this.onCancel.bind(this)}
                               theme="dark"
                               primary="paperRed"
                               raised={true}
                               text={cancelButtonText}/>}
+            {showSpiner && <ActivityIndicator style={styles.spinner}
+                                              size="large"
+                                              color="white"/>}
           </View>
         </View>
       </View>
@@ -160,7 +175,12 @@ const styles = StyleSheet.create({
  },
  orderActions: {
     flex: 1,
- }
+ },
+ spinner: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+  }
 });
 
 export default connect(state => ({

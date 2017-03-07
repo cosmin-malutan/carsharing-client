@@ -5,12 +5,21 @@ const initialState = {
     latitude: 46,
     longitude: 23
   },
+  order: null,
   trip: null,
   tripRequestState: ''
 }
 
 export default function position (state = initialState, action) {
   switch (action.type) {
+    case types.CANCEL_TRIP:
+      return Object.assign({}, state, {
+        trip: null
+      });
+    case types.SEND_ORDER:
+      return Object.assign({}, state, {
+        order: action.uuid,
+      });
     case types.UPDATE_LOCATION:
       return Object.assign({}, state, {
         coords: action.coords

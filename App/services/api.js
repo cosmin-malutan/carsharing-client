@@ -53,8 +53,21 @@ class ApiClass {
     return ApiClass.call(`${DIRECTIONS_API}?origin=${origin}&destination=${destination}&key=${config.GOOGLE_API_KEY}`);
   }
 
-  static connectWebSocket(dispatch) {
+  static sendOrder(trip, uuid) {
+    if (!socket || socket.closed) return;
+    socket.send(JSON.stringify({trip, uuid: uuid, type: "PLACE_ORDER"}));
+  }
 
+  static setDriverAvalable(type) {
+    if (!socket || socket.closed) return;
+    navigator.geolocation.getCurrentPosition(
+      (position) => socket.send(JSON.stringify({type: "DRIVER_AVAILABLE", coords: position.coords})),
+      (error) => {alert(JSON.stringify(error))},
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+    );
+  }
+
+  static connectWebSocket(dispatch) {
     try {
       socket = new WebSocket(`ws://${config.SERVER_HOST}:${config.SERVER_PORT}`);
       socket.onerror = function(error) {
@@ -67,6 +80,7 @@ class ApiClass {
       socket.onclose = function() {
         dispatch(socketClosed());
       };
+
       socket.onmessage = function(message) {
         dispatch(socketMessage(message));
       };

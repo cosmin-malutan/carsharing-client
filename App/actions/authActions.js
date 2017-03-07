@@ -93,8 +93,13 @@ export function checkUser() {
 }
 
 export function actorTypeChange(type) {
-  return {
-    type: types.ACTOR_TYPE_CHANGE,
-    actorType: type
+  return (dispatch, getState) => {
+    dispatch(Object.assign({}, {
+      type: types.ACTOR_TYPE_CHANGE,
+      actorType: type
+    }));
+
+    if (type == 'driver')
+      ApiClass.setDriverAvalable(type);
   }
 }
