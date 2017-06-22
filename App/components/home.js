@@ -16,6 +16,7 @@ import { RadioButtonGroup, Button, Icon, PRIMARY } from 'react-native-material-d
 
 import config from '../config';
 import DestinationSearchBox from './destinationSearchBox';
+import Logout from './logout';
 
 import {actorTypeChange} from '../actions/authActions';
 import {updateLocation, destinationsSelect, confirm, cancel} from '../actions/locationActions';
@@ -35,6 +36,15 @@ class Home extends Component {
     this.watchID = navigator.geolocation.watchPosition((position) => {
         this.props.dispatch(updateLocation(position.coords));
     });
+    if (!this.props.auth.authenticated) {
+      this.props.navigator.resetTo({id: 'login'});
+    }
+  }
+
+  componentWillReceiveProps(props) {
+    if (!props.auth.authenticated) {
+      props.navigator.resetTo({id: 'login'});
+    }
   }
 
   onDestinationSelect(destination) {
@@ -114,6 +124,7 @@ class Home extends Component {
           title={"You are here"}
           description={"HERE"}
           image={require('../images/me.png')}
+          style={styles.meMarker}
         />
         {route && <MapView.Marker coordinate={{
                                     latitude: route.legs[0].end_location.lat,
@@ -147,6 +158,7 @@ class Home extends Component {
             {showSpiner && <ActivityIndicator style={styles.spinner}
                                               size="large"
                                               color="white"/>}
+            {!showAcctions && !showSpiner && <Logout />}
           </View>
         </View>
       </View>
@@ -159,6 +171,10 @@ const styles = StyleSheet.create({
    ...StyleSheet.absoluteFillObject,
    justifyContent: 'flex-end',
    alignItems: 'center',
+ },
+ meMarker: {
+   width: 10,
+   height: 10
  },
  map: {
    ...StyleSheet.absoluteFillObject,

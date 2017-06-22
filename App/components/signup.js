@@ -49,7 +49,7 @@ class Signup extends Component {
             <View style={styles.topContainerMenu}>
               <TransparentButton style={styles.loginButton} 
                                  onPress={() => this.props.navigator.resetTo({id: 'login'})}
-                                color='#841584'>
+                                 color='#841584'>
                 Login
               </TransparentButton>
             </View>

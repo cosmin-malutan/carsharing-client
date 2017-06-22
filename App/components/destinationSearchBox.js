@@ -20,6 +20,9 @@ export default class DestinationSearchBox extends Component {
                                     styles={{
                                       predefinedPlacesDescription: {
                                         color: '#1faadb',
+                                      },
+                                      listView: {
+                                        backgroundColor: '#fff'
                                       }
                                     }}
                                     filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}

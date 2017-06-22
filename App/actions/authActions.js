@@ -103,3 +103,12 @@ export function actorTypeChange(type) {
       ApiClass.setDriverAvalable(type);
   }
 }
+
+export function logout() {
+  return (dispatch, getState) => {
+    AsyncStorage.removeItem('creditentials');
+    dispatch(Object.assign({}, {
+      type: types.LOGOUT
+    }));
+  }
+}

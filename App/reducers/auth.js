@@ -30,6 +30,7 @@ export default function auth(state = initialState, action) {
         authenticated: true,
         state: action.type
       });
+    case types.LOGOUT:
     case types.LOGIN_FAILED:
     case types.SIGNUP_FAILED:
       return Object.assign({}, state, {
