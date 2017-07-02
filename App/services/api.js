@@ -58,13 +58,29 @@ class ApiClass {
     socket.send(JSON.stringify({trip, uuid: uuid, type: "PLACE_ORDER"}));
   }
 
-  static setDriverAvalable(type) {
+  static acceptOrder(uuid, client) {
     if (!socket || socket.closed) return;
-    navigator.geolocation.getCurrentPosition(
-      (position) => socket.send(JSON.stringify({type: "DRIVER_AVAILABLE", coords: position.coords})),
-      (error) => {alert(JSON.stringify(error))},
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
-    );
+    socket.send(JSON.stringify({client: client, uuid: uuid, type: "ACCEPTED_ORDER"}));
+  }
+
+  static cancelOrder(uuid) {
+    if (!socket || socket.closed) return;
+    socket.send(JSON.stringify({uuid: uuid, type: "CANCELED_ORDER"}));
+  }
+
+  static setDriverAvailable(coords) {
+    if (socket && !socket.closed)
+      socket.send(JSON.stringify({type: "DRIVER_AVAILABLE", coords: coords}));
+  }
+  
+  static setDriverUnavailable() {
+    if (socket && !socket.closed)
+      socket.send(JSON.stringify({type: "DRIVER_UNAVAILABLE"}));
+  }
+
+  static notifyDriverPosition(coords) {
+    if (socket && !socket.closed)
+      socket.send(JSON.stringify({type: "DRIVER_POSITION", coords: coords}));
   }
 
   static connectWebSocket(dispatch) {

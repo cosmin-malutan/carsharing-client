@@ -100,7 +100,9 @@ export function actorTypeChange(type) {
     }));
 
     if (type == 'driver')
-      ApiClass.setDriverAvalable(type);
+      ApiClass.setDriverAvailable(getState().position.coords);
+    else
+      ApiClass.setDriverUnavailable();
   }
 }
 

@@ -5,6 +5,8 @@ const initialState = {
     latitude: 46,
     longitude: 23
   },
+  inProgress: false,
+  client: null,
   order: null,
   trip: null,
   tripRequestState: ''
@@ -37,6 +39,17 @@ export default function position (state = initialState, action) {
       return Object.assign({}, state, {
         tripRequestState: action.type,
         trip: null
+      });
+    case types.ORDER_ASSIGNED:
+      return Object.assign({}, state, {
+        trip: action.order.trip,
+        uuid: action.order.uuid,
+        client: action.order.rider
+      });
+    case types.ORDER_ACCEPTED:
+    case types.IN_PROGRESS:
+      return Object.assign({}, state, {
+        inProgress: true
       });
     default:
       return state;

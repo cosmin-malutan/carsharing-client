@@ -18,23 +18,55 @@ export function confirm() {
         const id = uuid.v4();
         dispatch(sendOrder(id));
         ApiClass.sendOrder(trip, id);
+        break;
       case "driver":
+        var position = getState().position;
+        ApiClass.acceptOrder(position.uuid, position.client);
+        dispatch({
+          type: types.IN_PROGRESS
+        });
+        break;
       default:
         console.log("Unhandled user type:", getState().auth.actorType);
     }
   }
 }
 
-export function cancel() {
-  return {
-    type : types.CANCEL_TRIP
-  };
+export function cancel(uuid) {
+  return (dispatch, getState) => {
+    switch (getState().auth.actorType) {
+      case "rider":
+        dispatch({
+          type : types.CANCEL_TRIP
+        });
+        break;
+      case "driver":
+        ApiClass.cancelOrder(getState().position.uuid);
+        ApiClass.setDriverAvailable(getState().position.coords);
+        dispatch({
+          type : types.CANCEL_TRIP
+        });
+        break;
+      default:
+        console.log("Unhandled user type:", getState().auth.actorType);
+    }
+  }
 }
 export function updateLocation(coords) {
-  return {
-    type : types.UPDATE_LOCATION,
-    coords: coords
-  };
+  return (dispatch, getState) => {
+    debugger;
+    dispatch({
+      type : types.UPDATE_LOCATION,
+      coords: coords
+    });
+
+    var isDriver = getState().auth.actorType == 'driver';
+    if (isDriver && getState().position.inProgress)
+      ApiClass.notifyDriverPosition(coords);
+    else if (isDriver)
+      ApiClass.setDriverAvailable(coords);
+
+  }
 }
 
 function fecthTripStart() {

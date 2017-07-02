@@ -91,7 +91,7 @@ class Home extends Component {
       });
     }
 
-    showAcctions = route;
+    showAcctions = route && !this.props.position.inProgress;
 
     if (showAcctions) {
       if (this.props.auth.actorType == 'rider' && this.props.position.order) {
