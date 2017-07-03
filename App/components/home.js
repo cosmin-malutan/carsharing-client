@@ -21,6 +21,9 @@ import Logout from './logout';
 import {actorTypeChange} from '../actions/authActions';
 import {updateLocation, destinationsSelect, confirm, cancel} from '../actions/locationActions';
 
+const PERSON_IMG = require('../images/me.png');
+const CAR_IMG = require('../images/car.png');
+
 var {width} = Dimensions.get('window');
 
 class Home extends Component {
@@ -123,7 +126,7 @@ class Home extends Component {
           }}
           title={"You are here"}
           description={"HERE"}
-          image={require('../images/me.png')}
+          image={isClient ? PERSON_IMG : CAR_IMG}
           style={styles.meMarker}
         />
         {route && <MapView.Marker coordinate={{
@@ -132,8 +135,25 @@ class Home extends Component {
                                   }}
                                   title={"Destination"}
                                   description={route.legs[0].end_address} />}
+        {route && !isClient && <MapView.Marker coordinate={{
+                                    latitude: route.legs[0].start_location.lat,
+                                    longitude: route.legs[0].start_location.lng
+                                  }}
+                                  title={"Destination"}
+                                  image={PERSON_IMG}
+                                  description={route.legs[0].start_address} />}
         {polylineArray && <MapView.Polyline strokeWidth={2}
                                             coordinates={polylineArray} />}
+        {route && isClient && this.props.position.driver && <MapView.Marker
+          coordinate={{  
+            latitude: this.props.position.driver.latitude,
+            longitude: this.props.position.driver.longitude,
+          }}
+          title={"Car"}
+          description={"Your car is here"}
+          image={CAR_IMG}
+          style={styles.meMarker}
+        />}
         </MapView>
         <View style={styles.destinationInputBox}>
           {isClient && <DestinationSearchBox onSelect={this.onDestinationSelect.bind(this)}/>}

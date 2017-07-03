@@ -7,6 +7,7 @@ const initialState = {
   },
   inProgress: false,
   client: null,
+  driver: null,
   order: null,
   trip: null,
   tripRequestState: ''
@@ -47,9 +48,17 @@ export default function position (state = initialState, action) {
         client: action.order.rider
       });
     case types.ORDER_ACCEPTED:
+      return Object.assign({}, state, {
+        inProgress: true,
+        driver: action.coords
+      });
     case types.IN_PROGRESS:
       return Object.assign({}, state, {
         inProgress: true
+      });
+    case types.DRIVER_POSITION:
+      return Object.assign({}, state, {
+        driver: action.coords
       });
     default:
       return state;

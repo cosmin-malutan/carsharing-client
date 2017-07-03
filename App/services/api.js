@@ -58,9 +58,9 @@ class ApiClass {
     socket.send(JSON.stringify({trip, uuid: uuid, type: "PLACE_ORDER"}));
   }
 
-  static acceptOrder(uuid, client) {
+  static acceptOrder(uuid, client, coords) {
     if (!socket || socket.closed) return;
-    socket.send(JSON.stringify({client: client, uuid: uuid, type: "ACCEPTED_ORDER"}));
+    socket.send(JSON.stringify({client: client, uuid: uuid, type: "ACCEPTED_ORDER", coords: coords}));
   }
 
   static cancelOrder(uuid) {

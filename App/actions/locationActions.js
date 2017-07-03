@@ -21,7 +21,7 @@ export function confirm() {
         break;
       case "driver":
         var position = getState().position;
-        ApiClass.acceptOrder(position.uuid, position.client);
+        ApiClass.acceptOrder(position.uuid, position.client, position.coords);
         dispatch({
           type: types.IN_PROGRESS
         });
@@ -54,7 +54,6 @@ export function cancel(uuid) {
 }
 export function updateLocation(coords) {
   return (dispatch, getState) => {
-    debugger;
     dispatch({
       type : types.UPDATE_LOCATION,
       coords: coords

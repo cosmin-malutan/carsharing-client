@@ -36,7 +36,14 @@ export function socketMessage(message) {
         break;
       case "DRIVER_ASSIGNED_TO_YOUR_ORDER":
         dispatch({
-          type: types.ORDER_ACCEPTED
+          type: types.ORDER_ACCEPTED,
+          coords: message.coords
+        });
+        break;
+      case "DRIVER_POSITION":
+        dispatch({
+          type: "DRIVER_POSITION",
+          coords: message.coords
         });
         break;
       default:
